@@ -4,7 +4,7 @@ const datastore = require('nedb-promise');
 const { translateAll } = require('./translate-api');
 const querystring = require('querystring');
 
-const PORT = 3000;
+const PORT = process.env.NODE_ENV === 'production' ? 443 : 3000;
 const app = new Koa();
 const db = datastore({ autoload: true });
 
