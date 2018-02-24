@@ -4,8 +4,6 @@ const { translateAll } = require('./translate-api');
 const app = new Koa();
 const PORT = 3000;
 
-// Config
-
 // Routes
 app.use(_.get('/', ctx => {
   ctx.body = '(◕ᴗ◕✿)';
