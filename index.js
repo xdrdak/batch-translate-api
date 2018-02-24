@@ -1,32 +1,31 @@
-const translate = require('google-translate-api');
-const languages = require('./languages');
+const Koa = require('koa');
+const _ = require('koa-route');
+const { translateAll } = require('./translate-api');
+const app = new Koa();
+const PORT = 3000;
 
-const sleepFor = ms => new Promise(res => setTimeout(res, ms));
+// Config
 
-async function getTranslation(text, lang, sleepTimer = 1000) {
-  const res = await translate(text, {to: lang});
-  // Let's play nice with google-translate so we don't get blacklisted.
-  await sleepFor(sleepTimer);
-  return res;
-}
+// Routes
+app.use(_.get('/', ctx => {
+  ctx.body = '(◕ᴗ◕✿)';
+}));
 
-async function asyncForEach(array, callback) {
-  for (let index = 0; index < array.length; index++) {
-    await callback(array[index], index, array)
-  }
-}
+app.use(_.get('/translate', async ctx => {
+  const { q } = ctx.query;
+  if (q) {
+    const results = await translateAll(q);
 
-async function translateAll(text) {
-  const results = [];
-  asyncForEach(languages, async (lang) => {
-    const res = await getTranslation(text, lang);
-    results.push({
-      text: res.text,
-      lang,
-      length: res.text.length,
+    // Sort from biggest to smallest.
+    const nextResults = results.sort((r1, r2) => {
+      return r1.length < r2.length;
     });
-  });
-  return results;
-}
 
-translateAll();
+    ctx.body = { nextResults };
+  } else {
+    ctx.body = { error: 'Query param `q` cannot be empty.' }
+  }
+}));
+
+console.log(`Server started at port ${PORT}.`);
+app.listen(3000);
