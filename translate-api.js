@@ -1,4 +1,5 @@
 const translate = require('google-translate-api');
+const Utfstring = require('utfstring');
 const languages = require('./languages');
 
 // Utility Functions
@@ -27,7 +28,7 @@ async function translateAll(text) {
     results.push({
       text: res.text,
       lang,
-      length: res.text.length,
+      length: Utfstring.length(res.text),
     });
   });
 

@@ -1,7 +1,7 @@
 const languages = [
   'cs',
   'da',
-  /*'de',
+  'de',
   'es',
   'fi',
   'fr',
@@ -9,7 +9,6 @@ const languages = [
   'it',
   'ja',
   'ko',
-  'nb',
   'nl',
   'pl',
   'pt',
@@ -17,7 +16,7 @@ const languages = [
   'sv',
   'th',
   'tr',
-  'zh',*/
+  'zh-cn',
 ];
 
 module.exports = languages;

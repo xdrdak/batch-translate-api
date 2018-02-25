@@ -31,7 +31,13 @@ app.use(_.get('/translate', async ctx => {
 
     // Sort from biggest to smallest.
     const nextResults = results.sort((r1, r2) => {
-      return r1.length < r2.length;
+      if (r1.length < r2.length) {
+        return 1;
+      } else if (r1.length > r2.length) {
+        return -1;
+      }
+
+      return 0;
     });
 
     // Cache results in the worst manner possible since I can't use redis on my instance of `now.sh`

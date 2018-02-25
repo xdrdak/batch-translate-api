@@ -3,8 +3,12 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "now": {
+    "name": "nyani-batch-translate-all-api",
+    "alias": "nyani-batch-translate-all-api"
+  },
   "scripts": {
-    "start": "node index.js",
+    "start": "NODE_ENV=production node index.js",
     "dev": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -15,7 +19,8 @@
     "google-translate-api": "^2.3.0",
     "koa": "^2.5.0",
     "koa-route": "^3.2.0",
-    "nedb-promise": "^2.0.1"
+    "nedb-promise": "^2.0.1",
+    "utfstring": "^2.0.0"
   },
   "devDependencies": {
     "nodemon": "^1.15.1"
