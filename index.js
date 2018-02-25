@@ -40,4 +40,4 @@ app.use(_.get('/translate', async ctx => {
 }));
 
 console.log(`Server started at port ${PORT}.`);
-app.listen(3000);
+app.listen(PORT);
