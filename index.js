@@ -18,8 +18,9 @@ app.use(_.get('/', ctx => {
 }));
 
 app.use(_.get('/translate', async ctx => {
-  const { q } = ctx.query;
   ctx.type = 'application/json';
+  const { q } = ctx.query;
+  let bodyData = { data: [], error: null };
 
   if (q) {
     const sanitizedQuery = querystring.escape(q);
@@ -33,10 +34,12 @@ app.use(_.get('/translate', async ctx => {
 
     // Cache results in the worst manner possible since I can't use redis on my instance of `now.sh`
     await db.insert({ query: sanitizedQuery, results: nextResults });
-    ctx.body = { data: nextResults };
+    bodyData.data = nextResults;
   } else {
-    ctx.body = { error: 'Query param `q` cannot be empty.' }
+    bodyData.error = 'Query param `q` cannot be empty.';
   }
+
+  ctx.body = bodyData;
 }));
 
 console.log(`Server started at port ${PORT}.`);
