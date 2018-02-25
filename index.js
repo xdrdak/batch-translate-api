@@ -1,12 +1,16 @@
 const Koa = require('koa');
 const _ = require('koa-route');
 const datastore = require('nedb-promise');
-const { translateAll } = require('./translate-api');
 const querystring = require('querystring');
+const { translateAll } = require('./translate-api');
+const errorHandlingMiddleware = require('./middlewares/error-handling');
 
 const PORT = process.env.NODE_ENV === 'production' ? 443 : 3000;
 const app = new Koa();
 const db = datastore({ autoload: true });
+
+// Middlewares
+app.use(errorHandlingMiddleware);
 
 // Routes
 app.use(_.get('/', ctx => {
@@ -15,6 +19,7 @@ app.use(_.get('/', ctx => {
 
 app.use(_.get('/translate', async ctx => {
   const { q } = ctx.query;
+  ctx.type = 'application/json';
 
   if (q) {
     const sanitizedQuery = querystring.escape(q);
@@ -28,7 +33,7 @@ app.use(_.get('/translate', async ctx => {
 
     // Cache results in the worst manner possible since I can't use redis on my instance of `now.sh`
     await db.insert({ query: sanitizedQuery, results: nextResults });
-    ctx.body = { nextResults };
+    ctx.body = { data: nextResults };
   } else {
     ctx.body = { error: 'Query param `q` cannot be empty.' }
   }
