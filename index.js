@@ -1,5 +1,6 @@
 const Koa = require('koa');
 const _ = require('koa-route');
+const cors = require('@koa/cors');
 const datastore = require('nedb-promise');
 const querystring = require('querystring');
 const { translateAll } = require('./translate-api');
@@ -10,6 +11,7 @@ const app = new Koa();
 const db = datastore({ autoload: true });
 
 // Middlewares
+app.use(cors());
 app.use(errorHandlingMiddleware);
 
 // Routes
@@ -23,9 +25,9 @@ app.use(_.get('/translate', async ctx => {
   let bodyData = { data: [], error: null };
 
   if (q) {
-    const sanitizedQuery = querystring.escape(q);
-    const cachedResult = await db.findOne({ query: sanitizedQuery });
-    const results = cachedResult ? cachedResult.results : await translateAll(sanitizedQuery);
+    const nextQuery = q.toLowerCase();
+    const cachedResult = await db.findOne({ query: nextQuery });
+    const results = cachedResult ? cachedResult.results : await translateAll(nextQuery);
 
     // Sort from biggest to smallest.
     const nextResults = results.sort((r1, r2) => {
@@ -33,7 +35,7 @@ app.use(_.get('/translate', async ctx => {
     });
 
     // Cache results in the worst manner possible since I can't use redis on my instance of `now.sh`
-    await db.insert({ query: sanitizedQuery, results: nextResults });
+    await db.insert({ query: nextQuery, results: nextResults });
     bodyData.data = nextResults;
   } else {
     bodyData.error = 'Query param `q` cannot be empty.';
